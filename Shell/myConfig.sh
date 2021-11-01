@@ -1,7 +1,7 @@
 #!/bin/bash
 cd /root/MyScripts
 git pull
-yes | cp /root/MyScripts/JavaScript/myConfig.js /root/IPNotification/myConfig.js
+yes | cp /root/MyScripts/JavaScript/myConfig.js /root/MyConfig/myConfig.js
 cd /root/MyConfig
 git pull
 yes | cp /root/MyConfig/JDSign/Cookie.json /root/JDSign/Cookie.json
