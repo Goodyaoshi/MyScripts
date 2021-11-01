@@ -75,22 +75,16 @@ Date.prototype.Format = function (fmt) {
 
 //发送通知入口
 async function sendNotify(text, desp) {
-	if(((text.indexOf("京东资产变动通知") != -1) && (text.indexOf("失效") != -1)) || (text.indexOf("已可领取") != -1) || (text.indexOf("已可兑换") != -1) || (desp.indexOf("已可领取") != -1) || (desp.indexOf("已可兑换") != -1))
-	{
-		if(desp.indexOf("但未继续") == -1)
-		{
-			let Shorttext = text.match(/.*?(?=\s?-)/g) ? text.match(/.*?(?=\s?-)/g)[0] : text;
-			await Promise.all([
-				BarkNotify(Shorttext, desp)//iOS Bark APP
-			])
-			await Promise.all([
-				pushPlusNotify(text, desp)//pushplus
-			])
-			await Promise.all([
-				serverNotify(text, desp)//server酱
-			])
-		}
-	}
+	let Shorttext = text.match(/.*?(?=\s?-)/g) ? text.match(/.*?(?=\s?-)/g)[0] : text;
+	await Promise.all([
+		BarkNotify(Shorttext, desp)//iOS Bark APP
+	])
+	await Promise.all([
+		pushPlusNotify(text, desp)//pushplus
+	])
+	await Promise.all([
+		serverNotify(text, desp)//server酱
+	])
 }
 
 //Server酱通知
