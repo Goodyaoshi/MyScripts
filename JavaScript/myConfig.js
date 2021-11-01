@@ -35,7 +35,7 @@ function setCookie(load_path,save_path){
 	let jdCookie = [];
 	for (let i = 0; i < data.length; i++) {
 		if((data[i].pt_pin == "jd_4c10eb2c6c32c") || (data[i].pt_pin == "jd_cmbklrvzIKCA")){
-			jdCookie.push(str);
+			jdCookie.push(data[i]);
 		}
 	}
 	savejson(save_path, jdCookie);
