@@ -1,3 +1,3 @@
 #!/bin/bash
-cd /root/JDScripts
+cd /root/JDScripts/
 node ./jd_fruit.js

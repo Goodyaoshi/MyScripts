@@ -1,6 +1,6 @@
 #!/bin/bash
 yes | cp /root/MyConfig/JDScripts/Cookie.json /root/JDScripts/Cookie.json
-cd /root/JDScripts
+cd /root/JDScripts/
 node jd_bean_change.js
 node jd_bean_home.js
 node jd_beauty.js

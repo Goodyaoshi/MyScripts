@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /root/MyScripts
+cd /root/MyScripts/
 git pull
 yes | cp /root/MyScripts/JavaScript/myConfig.js /root/MyConfig/myConfig.js
 yes | cp /root/MyScripts/JavaScript/ipNotification.js /root/IPNotification/ipNotification.js
