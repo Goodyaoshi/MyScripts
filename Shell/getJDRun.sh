@@ -48,6 +48,7 @@ setJDScripts()
 	yes | cp /root/MyConfig/JDScripts/Cookie.json /root/JDScripts/Cookie.json
 	yes | cp /root/MyScripts/JavaScript/jdCookie.js /root/JDScripts/jdCookie.js
 	yes | cp /root/MyScripts/JavaScript/sendNotify.js /root/JDScripts/sendNotify.js
+	sed -i 's#./Cookie.json#/root/JDScripts/Cookie.json#g' /root/JDScripts/jdCookie.js
 	cd /root/JDScripts/
 	npm install request-promise
 	npm install request
@@ -94,9 +95,8 @@ setCron()
 {
 	cp -rf /root/jd_scripts/docker/crontab_list.sh /var/spool/cron/crontabs/root
 	sed -i 's#30 * * * * sh +x /scripts/docker/auto_help.sh collect >> /scripts/logs/auto_help_collect.log 2>&1#/n#g'  /var/spool/cron/crontabs/root
-	sed -i "s# >> /scripts/logs#> /root/JDLogs#g" /var/spool/cron/crontabs/root
+	sed -i "s#>> /scripts/logs#> /root/JDLogs#g" /var/spool/cron/crontabs/root
 	sed -i 's#scripts#root/MyConfig/JDScripts#g' /var/spool/cron/crontabs/root
-	sed -i 's#node#cd /root/JDScripts/ && node#g' /var/spool/cron/crontabs/root
 	service cron stop
 	service cron start
 	service cron restart
