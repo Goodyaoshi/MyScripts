@@ -64,6 +64,25 @@ setShell()
 	echo "cd /root/JDScripts/" >> /root/JDShell/jdScripts.sh
 	traverseDir /root/JDScripts
 	echo "" >> /root/JDShell/jdScripts.sh
+	sed -i 's#node /root/JDScripts/JDJRValidator_Pure.js##g' /root/JDShell/jdScripts.sh
+	sed -i 's#node /root/JDScripts/JD_DailyBonus.js##g' /root/JDShell/jdScripts.sh
+	sed -i 's#node /root/JDScripts/JD_extra_cookie.js##g' /root/JDShell/jdScripts.sh
+	sed -i 's#node /root/JDScripts/JS_USER_AGENTS.js##g' /root/JDShell/jdScripts.sh
+	sed -i 's#node /root/JDScripts/TS_USER_AGENTS.js##g' /root/JDShell/jdScripts.sh
+	sed -i 's#node /root/JDScripts/USER_AGENTS.js##g' /root/JDShell/jdScripts.sh
+	sed -i 's#node /root/JDScripts/ZooFaker_Necklace.js##g' /root/JDShell/jdScripts.sh
+	sed -i 's#node /root/JDScripts/jdCookie.js##g' /root/JDShell/jdScripts.sh
+	sed -i 's#node /root/JDScripts/jd_getShareCodes.js##g' /root/JDShell/jdScripts.sh
+	sed -i 's#node /root/JDScripts/jdDreamFactoryShareCodes.js##g' /root/JDShell/jdScripts.sh
+	sed -i 's#node /root/JDScripts/jdFactoryShareCodes.js##g' /root/JDShell/jdScripts.sh
+	sed -i 's#node /root/JDScripts/jdFruitShareCodes.js##g' /root/JDShell/jdScripts.sh
+	sed -i 's#node /root/JDScripts/jdJxncShareCodes.js##g' /root/JDShell/jdScripts.sh
+	sed -i 's#node /root/JDScripts/jdPetShareCodes.js##g' /root/JDShell/jdScripts.sh
+	sed -i 's#node /root/JDScripts/jdPlantBeanShareCodes.js##g' /root/JDShell/jdScripts.sh
+	sed -i 's#node /root/JDScripts/jd_family.js##g' /root/JDShell/jdScripts.sh
+	sed -i 's#node /root/JDScripts/jd_delCoupon.js##g' /root/JDShell/jdScripts.sh
+	sed -i 's#node /root/JDScripts/sendNotify.js##g' /root/JDShell/jdScripts.sh
+	sed -i '/^$/d' /root/JDShell/jdScripts.sh
 	yes | cp /root/JDShell/jdScripts.sh /root/MyScripts/Shell/jdScripts.sh
 	cd /root/MyScripts/
 	git add Shell/
