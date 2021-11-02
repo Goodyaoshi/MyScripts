@@ -74,9 +74,9 @@ setShell()
 setCron()
 {
 	cp -rf /root/jd_scripts/docker/crontab_list.sh /var/spool/cron/root
-	service crond stop
-	service crond start
-	service crond restart
+	sed -i 's#30 * * * * sh +x /scripts/docker/auto_help.sh collect >> /scripts/logs/auto_help_collect.log 2>&1#/n#g'  /var/spool/cron/root
+	sed -i "s# >> /scripts/logs#> /root/JDLogs#g" /var/spool/cron/root
+	sed -i 's#scripts#root/MyConfig/JDScripts#g' /var/spool/cron/root
 	service cron stop
 	service cron start
 	service cron restart
