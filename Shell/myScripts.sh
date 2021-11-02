@@ -11,6 +11,7 @@ yes | cp /root/MyScripts/Shell/myConfig.sh /root/MyConfig/myConfig.sh
 yes | cp /root/MyScripts/Shell/ipNotification.sh /root/IPNotification/ipNotification.sh
 yes | cp /root/MyScripts/Shell/novelNotice.sh /root/NovelNotice/novelNotice.sh
 yes | cp /root/MyScripts/Shell/jdSign.sh /root/JDSign/jdSign.sh
+yes | cp /root/MyScripts/Shell/getJDRun.sh /root/JDShell/getJDRun.sh
 yes | cp /root/MyScripts/Shell/jdScripts.sh /root/JDShell/jdScripts.sh
 yes | cp /root/MyScripts/Shell/jdFruit.sh /root/JDShell/jdFruit.sh
 yes | cp /root/MyScripts/Shell/jdPet.sh /root/JDShell/jdPet.sh
