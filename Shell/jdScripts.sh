@@ -1,21 +1,7 @@
 #!/bin/bash
 yes | cp /root/MyConfig/JDScripts/Cookie.json /root/JDScripts/Cookie.json
 cd /root/JDScripts/
-node /root/JDScripts/JDJRValidator_Pure.js
-node /root/JDScripts/JD_DailyBonus.js
-node /root/JDScripts/JD_extra_cookie.js
-node /root/JDScripts/JS_USER_AGENTS.js
-node /root/JDScripts/TS_USER_AGENTS.js
-node /root/JDScripts/USER_AGENTS.js
-node /root/JDScripts/ZooFaker_Necklace.js
 node /root/JDScripts/cleancart_activity.js
-node /root/JDScripts/jdCookie.js
-node /root/JDScripts/jdDreamFactoryShareCodes.js
-node /root/JDScripts/jdFactoryShareCodes.js
-node /root/JDScripts/jdFruitShareCodes.js
-node /root/JDScripts/jdJxncShareCodes.js
-node /root/JDScripts/jdPetShareCodes.js
-node /root/JDScripts/jdPlantBeanShareCodes.js
 node /root/JDScripts/jd_88hb.js
 node /root/JDScripts/jd_IndustryLottery.js
 node /root/JDScripts/jd_api_test.js
@@ -48,7 +34,6 @@ node /root/JDScripts/jd_connoisseur.js
 node /root/JDScripts/jd_daily_egg.js
 node /root/JDScripts/jd_daily_lottery.js
 node /root/JDScripts/jd_ddworld.js
-node /root/JDScripts/jd_delCoupon.js
 node /root/JDScripts/jd_dj_bean.js
 node /root/JDScripts/jd_dj_fruit.js
 node /root/JDScripts/jd_dj_fruit_collectWater.js
@@ -59,13 +44,11 @@ node /root/JDScripts/jd_dreamFactory.js
 node /root/JDScripts/jd_dreamFactory_help.js
 node /root/JDScripts/jd_dwapp.js
 node /root/JDScripts/jd_esManager.js
-node /root/JDScripts/jd_family.js
 node /root/JDScripts/jd_fcwb.js
 node /root/JDScripts/jd_foodRunning.js
 node /root/JDScripts/jd_forceUpdateCron.js
 node /root/JDScripts/jd_fruit.js
 node /root/JDScripts/jd_fruit_moreTask.js
-node /root/JDScripts/jd_getShareCodes.js
 node /root/JDScripts/jd_getUp.js
 node /root/JDScripts/jd_gold_creator.js
 node /root/JDScripts/jd_guaMMdou.js
@@ -160,6 +143,4 @@ node /root/JDScripts/jd_yili_cow.js
 node /root/JDScripts/jd_ys.js
 node /root/JDScripts/jd_zsign.js
 node /root/JDScripts/jd_zzt.js
-node /root/JDScripts/sendNotify.js
 node /root/JDScripts/sign_graphics_validate.js
-
