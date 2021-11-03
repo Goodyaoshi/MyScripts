@@ -19,8 +19,10 @@ function getCookie(filepath){
 	let data = loadjson(filepath);
 	let jdCookie = [];
 	for (let i = 0; i < data.length; i++) {
-		let str = "pt_key=" + data[i].pt_key + ";pt_pin=" + data[i].pt_pin + ";";
-		jdCookie.push(str);
+		if(data[i].pt_key && data[i].pt_pin){
+			let str = "pt_key=" + data[i].pt_key + ";pt_pin=" + data[i].pt_pin + ";";
+			jdCookie.push(str);
+		}
 	}
 	return jdCookie;
 }

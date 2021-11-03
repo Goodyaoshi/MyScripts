@@ -1,6 +1,6 @@
-const exec = require('child_process').execSync
-const rp = require('request-promise')
-const download = require('download')
+const exec = require('child_process').execSync;
+const rp = require('request-promise');
+const download = require('download');
 const iconv = require('iconv-lite');
 const fs = require('fs');
 
@@ -14,19 +14,19 @@ const SCKEY = 'SCT24803TkGQpjDc2bge7Mhd2yzWBx1MX';
 const BARK_PUSH = 'ZwSc2BDAiPYHLpicm5LQUA';
 
 // 京东脚本文件
-const js_url = 'https://cdn.jsdelivr.net/gh/NobyDa/Script@master/JD-DailyBonus/JD_DailyBonus.js'
+const js_url = 'https://cdn.jsdelivr.net/gh/NobyDa/Script@master/JD-DailyBonus/JD_DailyBonus.js';
 // Cookie路径
-const cookie_path = './Cookie.json'
+const cookie_path = './Cookie.json';
 // 下载脚本路径
-const js_path = './JD_DailyBonus.js'
+const js_path = './JD_DailyBonus.js';
 // 脚本执行输出路径
-const result_path = './result.txt'
+const result_path = './result.txt';
 // 短通知是否发送成功
 let Short = false;
 // 长通知是否发送成功
 let Long = false;
 // 通知内容
-let allMessage = '';
+let allMessage = '【签到时间】：' + dateFormat() + '\n';
 
 //读取配置文件
 function loadjson(filepath){
@@ -46,10 +46,23 @@ function getCookie(filepath){
 	let data = loadjson(filepath);
 	let jdCookie = [];
 	for (let i = 0; i < data.length; i++) {
-		let str = "pt_key=" + data[i].pt_key + ";pt_pin=" + data[i].pt_pin + ";";
-		jdCookie.push(str);
+		if(data[i].pt_key && data[i].pt_pin){
+			let str = "pt_key=" + data[i].pt_key + ";pt_pin=" + data[i].pt_pin + ";";
+			jdCookie.push(str);
+		}
 	}
 	return jdCookie;
+}
+
+//替换cookie
+async function setupCookie(cookie) {
+	var js_content = fs.readFileSync(js_path, 'utf8')
+	js_content = js_content.replace(/var Key = '.*'/, `var Key = '${cookie}'`)
+	try {
+		await fs.writeFileSync(js_path, js_content, 'utf8');
+	} catch (e) {
+		console.log("京东签到替换Cookie异常:" + e);
+	}
 }
 
 //时间格式化
@@ -73,18 +86,77 @@ Date.prototype.Format = function (fmt) {
   return fmt;
 };
 
+//日期格式化
+function dateFormat() {
+  var timezone = 8;
+  var GMT_offset = new Date().getTimezoneOffset();
+  var n_Date = new Date().getTime();
+  var t_Date = new Date(n_Date + GMT_offset * 60 * 1000 + timezone * 60 * 60 * 1000);
+  console.log(t_Date)
+  return t_Date.Format('yyyy-MM-dd HH:mm:ss')
+}
+
 //发送通知入口
 async function sendNotify(text, desp) {
-	let Shorttext = text.match(/.*?(?=\s?-)/g) ? text.match(/.*?(?=\s?-)/g)[0] : text;
-	await Promise.all([
-		BarkNotify(Shorttext, desp)//iOS Bark APP
-	])
-	await Promise.all([
-		pushPlusNotify(text, desp)//pushplus
-	])
-	await Promise.all([
-		serverNotify(text, desp)//server酱
-	])
+	if(desp.indexOf('获取失败') != -1){
+		let Shorttext = text.match(/.*?(?=\s?-)/g) ? text.match(/.*?(?=\s?-)/g)[0] : text;
+		await Promise.all([
+			BarkNotify(Shorttext, desp)//iOS Bark APP
+		])
+		await Promise.all([
+			pushPlusNotify(text, desp)//pushplus
+		])
+		await Promise.all([
+			serverNotify(text, desp)//server酱
+		])
+	}
+}
+
+//Push Plus通知
+function pushPlusNotify(text, desp) {
+  return new Promise(resolve => {
+    if (PUSH_PLUS_TOKEN && !Short) {
+      desp = desp.replace(/[\n\r]/g, '<br>');
+      const body = {
+        token: `${PUSH_PLUS_TOKEN}`,
+        title: `${text}`,
+        content:`${desp}`,
+        topic: `${PUSH_PLUS_USER}`
+      };
+      const options = {
+        url: `https://pushplus.plus/send`,
+        body: JSON.stringify(body),
+        headers: {
+          'Content-Type': ' application/json'
+        }
+      }
+      rp.post(options, (err, resp, data) => {
+        try {
+          if (err) {
+            let Long = false;
+            console.log(`push+发送${PUSH_PLUS_USER ? '一对多' : '一对一'}通知消息失败！！\n`)
+            console.log(err);
+          } else {
+            data = JSON.parse(data);
+            if (data.code === 200) {
+              Long = true;
+              console.log(`push+发送${PUSH_PLUS_USER ? '一对多' : '一对一'}通知消息完成。\n`)
+            } else {
+              let Long = false;
+              console.log(`push+发送${PUSH_PLUS_USER ? '一对多' : '一对一'}通知消息失败：${data.msg}\n`)
+            }
+          }
+        } catch (e) {
+          let Long = false;
+          console.log(e);
+        } finally {
+          resolve(data);
+        }
+      })
+    } else {
+      resolve()
+    }
+  })
 }
 
 //Server酱通知
@@ -173,74 +245,6 @@ function BarkNotify(text, desp) {
   })
 }
 
-//Push Plus通知
-function pushPlusNotify(text, desp) {
-  return new Promise(resolve => {
-    if (PUSH_PLUS_TOKEN && !Short) {
-      desp = desp.replace(/[\n\r]/g, '<br>');
-      const body = {
-        token: `${PUSH_PLUS_TOKEN}`,
-        title: `${text}`,
-        content:`${desp}`,
-        topic: `${PUSH_PLUS_USER}`
-      };
-      const options = {
-        url: `https://pushplus.plus/send`,
-        body: JSON.stringify(body),
-        headers: {
-          'Content-Type': ' application/json'
-        }
-      }
-      rp.post(options, (err, resp, data) => {
-        try {
-          if (err) {
-            let Long = false;
-            console.log(`push+发送${PUSH_PLUS_USER ? '一对多' : '一对一'}通知消息失败！！\n`)
-            console.log(err);
-          } else {
-            data = JSON.parse(data);
-            if (data.code === 200) {
-              Long = true;
-              console.log(`push+发送${PUSH_PLUS_USER ? '一对多' : '一对一'}通知消息完成。\n`)
-            } else {
-              let Long = false;
-              console.log(`push+发送${PUSH_PLUS_USER ? '一对多' : '一对一'}通知消息失败：${data.msg}\n`)
-            }
-          }
-        } catch (e) {
-          let Long = false;
-          console.log(e);
-        } finally {
-          resolve(data);
-        }
-      })
-    } else {
-      resolve()
-    }
-  })
-}
-
-//日期格式化
-function dateFormat() {
-  var timezone = 8;
-  var GMT_offset = new Date().getTimezoneOffset();
-  var n_Date = new Date().getTime();
-  var t_Date = new Date(n_Date + GMT_offset * 60 * 1000 + timezone * 60 * 60 * 1000);
-  console.log(t_Date)
-  return t_Date.Format('yyyy.MM.dd')
-}
-
-//替换cookie
-async function setupCookie(cookie) {
-	var js_content = fs.readFileSync(js_path, 'utf8')
-	js_content = js_content.replace(/var Key = '.*'/, `var Key = '${cookie}'`)
-	try {
-		await fs.writeFileSync(js_path, js_content, 'utf8');
-	} catch (e) {
-		console.log("京东签到替换Cookie异常:" + e);
-	}
-}
-
 //下载文件
 async function downFile (url) {
 	try{
@@ -261,9 +265,6 @@ async function deleteFile(path) {
 
 //每个账号执行京东签到
 async function jdSign(cookie) {
-	if (!cookie) {
-		console.log('请配置京东cookie!'); return;
-	}
 	// 1、替换cookie
 	await setupCookie(cookie);
 	// 2、执行脚本
@@ -276,9 +277,10 @@ async function jdSign(cookie) {
 		const matchReg = /(?<=pt_pin=).*?(?=;)/;
 		let BarkContent = '';
 		if (barkContentStart > -1 && barkContentEnd > -1) {
-			BarkContent += '【签到账号】:' + cookie.match(matchReg) + '\n';
+			BarkContent += '【签到账号】：' + cookie.match(matchReg) + '\n';
 			BarkContent += notifyContent.substring(barkContentStart, barkContentEnd);
 			BarkContent = BarkContent.split('\n\n')[0];
+			BarkContent += '\n';
 		}
 		if(BarkContent){
 			allMessage += BarkContent;

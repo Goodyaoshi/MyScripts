@@ -3,9 +3,16 @@ const fetch = require('node-fetch');
 const iconv = require('iconv-lite');
 const fs = require('fs');
 
-var Bark_Key;
-var BookList;
+// setup Path
+const setup_Path = './setup.json';
+// Bark iOS
+const Bark_Key = loadjson(setup_Path).Bark_Key;
+// BookList
+var BookList = loadjson(setup_Path).BookList;
+// 获得所有书籍更新信息
+getAllUpdateInfo();
 
+// 加载配置
 function loadjson(filepath){
 	let data;
 	try{
@@ -18,6 +25,7 @@ function loadjson(filepath){
 	return data;
 }
 
+// 保存配置
 function savejson(filepath, data){
 	let datastr = JSON.stringify(data, null, 4);
 	if (datastr){
@@ -27,85 +35,46 @@ function savejson(filepath, data){
 	}
 }
 
-function loadsetup(){
-    var data = loadjson('./setup.json');
-    Bark_Key = data.Bark_Key;
-    BookList = data.BookList;
-}
-
-function getcid(id, Channel,data){
-    var cid = "";
-    if(Channel == "起点"){
-        for(var i=0; i<data.BookList.起点.length; i++){
-            if(data.BookList.起点[i].id == id)
-            {
-                cid = data.BookList.起点[i].cid;
-            }
-        }
-    }else if(Channel == "纵横"){
-        for(var i=0; i<data.BookList.纵横.length; i++){
-            if(data.BookList.纵横[i].id == id)
-            {
-                cid = data.BookList.纵横[i].cid;
-            }
-        }
-    }else{
-        for(var i=0; i<data.BookList.晋江.length; i++){
-            if(data.BookList.晋江[i].id == id)
-            {
-                cid = data.BookList.晋江[i].cid;
+// 得到章节id
+function getcid(id){
+	for (var p in BookList) {
+        for (let i = 0; i < BookList[p].length; i++) {
+            if(BookList[p][i].id == id){
+                return BookList[p][i].cid;
             }
         }
     }
-    return cid;
 }
 
-function setcid(cid,id, Channel,data){
-    if(Channel == "起点"){
-        for(var i=0; i<data.BookList.起点.length; i++){
-            if(data.BookList.起点[i].id == id)
-            {
-                data.BookList.起点[i].cid = cid;
-            }
-        }
-    }else if(Channel == "纵横"){
-        for(var i=0; i<data.BookList.纵横.length; i++){
-            if(data.BookList.纵横[i].id == id)
-            {
-                data.BookList.纵横[i].cid = cid;
-            }
-        }
-    }else{
-        for(var i=0; i<data.BookList.晋江.length; i++){
-            if(data.BookList.晋江[i].id == id)
-            {
-                data.BookList.晋江[i].cid = cid;
+// 设置章节id
+function setcid(cid,id){
+	for (var p in BookList) {
+        for (let i = 0; i < BookList[p].length; i++) {
+            if(BookList[p][i].id == id){
+                BookList[p][i].cid = cid;
+				return;
             }
         }
     }
-    savejson('./setup.json', data);
 }
 
-function Bark(BookName, Author, Chapter, Bark_Key) {
+// 发送通知
+function Bark(BookName, Author, Chapter) {
     fetch('https://api.day.app/' + Bark_Key + '/' + encodeURIComponent('《' + BookName + '》') + '/' + encodeURIComponent(Chapter) + '?sound=silence&group=' + encodeURIComponent('小说更新提醒') + '&url=' + encodeURIComponent('iFreeTime://bk/a=' + encodeURIComponent(Author) + '&n=' + encodeURIComponent(BookName) + '&d=0'))
         .then(res => res.json())
         .then(json => console.log(json.message));
 }
 
-function refreshVariables(id, BookName, Author, new_cid, UpdateChapterName, Channel) {
-    var data = loadjson('./setup.json');
-    let old_cid = getcid(id,Channel,data);
-    console.log('\n(' + id + ')' + BookName + '的 old_cid: ' + old_cid);
-    if (old_cid >= new_cid) {
-        console.log('\n(' + id + ')' + BookName + ': 暂无更新, 最新章节为 ' + UpdateChapterName + '(' + new_cid + ')');
-    } else {
-        console.log('\n(' + id + ')' + BookName + '_更新章节: ' + UpdateChapterName + '(' + new_cid + ')');
-        Bark(BookName, Author, UpdateChapterName, Bark_Key);
-    }
-    setcid(new_cid,id,Channel,data);
+// 与旧章节对比
+function updateChapter(id, BookName, Author, new_cid, UpdateChapterName) {
+	if(getcid(id) < new_cid){
+		Bark(BookName, Author, UpdateChapterName);
+	}
+    setcid(new_cid,id);
 }
 
-async function refreshUpdateinfo(id, Channel) {
+// 得到最新章节
+async function getUpdateInfo(id, Channel) {
     if (Channel == "起点") {
         await fetch('http://druid.if.qidian.com/Atom.axd/Api/Book/GetChapterList?BookId=' + id + '&timeStamp=253402185599000')
             .then(res => res.json())
@@ -116,10 +85,7 @@ async function refreshUpdateinfo(id, Channel) {
                     let obj = json.Data.LastVipUpdateChapterId ? 'LastVip' : 'Last';
                     let new_cid = json.Data[obj + 'UpdateChapterId'];
                     let UpdateChapterName = json.Data[obj + 'UpdateChapterName'];
-                    console.log('\n(' + id + ')' + BookName + '_更新时间: ' + json.Data[obj + 'ChapterUpdateTime']);
-                    refreshVariables(id, BookName, Author, new_cid, UpdateChapterName, "起点")
-                } else {
-                    console.log('\n(' + id + ')' + BookName + '_错误: ' + json.Message);
+                    updateChapter(id, BookName, Author, new_cid, UpdateChapterName);
                 }
             })
     } else if (Channel == "纵横") {
@@ -141,10 +107,7 @@ async function refreshUpdateinfo(id, Channel) {
                     let Author = json.result.authorName;
                     let new_cid = json.result.latestChapterId;
                     let UpdateChapterName = json.result.latestChapterName;
-                    console.log('\n(' + id + ')' + BookName + '_更新时间: ' + json.result.updateTime);
-                    refreshVariables(id, BookName, Author, new_cid, UpdateChapterName, "纵横")
-                } else {
-                    console.log('\n(' + id + ')' + BookName + '_错误: ' + json.message);
+                    updateChapter(id, BookName, Author, new_cid, UpdateChapterName)
                 }
             })
     } else if (Channel == "晋江") {
@@ -160,27 +123,20 @@ async function refreshUpdateinfo(id, Channel) {
                     let Author = json.authorName;
                     let new_cid = json.renewChapterId;
                     let UpdateChapterName = json.renewChapterName;
-                    console.log('\n(' + id + ')' + BookName + '_更新时间: ' + json.renewDate);
-                    refreshVariables(id, BookName, Author, new_cid, UpdateChapterName, "晋江")
-                } else {
-                    console.log('\n(' + id + ')' + BookName + '_错误: ' + json.message);
+                    updateChapter(id, BookName, Author, new_cid, UpdateChapterName)
                 }
             })
     }
 
 }
 
-async function _refreshUpdateinfo(BookList) {
+// 每一本书都检查是否有更新
+async function getAllUpdateInfo() {
     for (var p in BookList) {
         for (let i = 0; i < BookList[p].length; i++) {
-            await refreshUpdateinfo(BookList[p][i].id, p);
+            await getUpdateInfo(BookList[p][i].id, p);
         }
     }
+	// 保存配置
+	savejson(setup_Path,{"Bark_Key": Bark_Key,"BookList": BookList});
 }
-
-async function main() {
-    loadsetup();
-    await _refreshUpdateinfo(BookList);
-}
-
-main();
