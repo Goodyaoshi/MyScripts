@@ -2,7 +2,6 @@
 yes | cp /root/MyConfig/JDScripts/Cookie.json /root/JDScripts/Cookie.json
 cd /root/JDScripts/
 node /root/JDScripts/cleancart_activity.js
-node /root/JDScripts/jd_88hb.js
 node /root/JDScripts/jd_IndustryLottery.js
 node /root/JDScripts/jd_api_test.js
 node /root/JDScripts/jd_bean_box.js
@@ -26,8 +25,6 @@ node /root/JDScripts/jd_cfd_mooncake.js
 node /root/JDScripts/jd_cfd_shell.js
 node /root/JDScripts/jd_cfd_stock.js
 node /root/JDScripts/jd_checkCookie.js
-node /root/JDScripts/jd_city_getParam.js
-node /root/JDScripts/jd_city_withdraw.js
 node /root/JDScripts/jd_cjhz.js
 node /root/JDScripts/jd_club_lottery.js
 node /root/JDScripts/jd_connoisseur.js
@@ -66,6 +63,9 @@ node /root/JDScripts/jd_guaopencard57.js
 node /root/JDScripts/jd_guaopencard58.js
 node /root/JDScripts/jd_guaopencard59.js
 node /root/JDScripts/jd_guaopencard60.js
+node /root/JDScripts/jd_guaopencard62.js
+node /root/JDScripts/jd_guaopencard63.js
+node /root/JDScripts/jd_guaopencard64.js
 node /root/JDScripts/jd_guaredEnvelopes.js
 node /root/JDScripts/jd_guawealth_island.js
 node /root/JDScripts/jd_guawealth_island_help.js
@@ -87,6 +87,7 @@ node /root/JDScripts/jd_jump.js
 node /root/JDScripts/jd_jxg.js
 node /root/JDScripts/jd_jxgc.js
 node /root/JDScripts/jd_jxgc_stock.js
+node /root/JDScripts/jd_jxhb.js
 node /root/JDScripts/jd_jxlhb.js
 node /root/JDScripts/jd_jxmc.js
 node /root/JDScripts/jd_jxmc_getCoin.js
@@ -101,7 +102,6 @@ node /root/JDScripts/jd_lotteryMachine.js
 node /root/JDScripts/jd_market_lottery.js
 node /root/JDScripts/jd_mf.js
 node /root/JDScripts/jd_mf_exchange.js
-node /root/JDScripts/jd_mkdir_json.js
 node /root/JDScripts/jd_mofang.js
 node /root/JDScripts/jd_mohe.js
 node /root/JDScripts/jd_moneyTree.js
@@ -122,6 +122,7 @@ node /root/JDScripts/jd_sgmh.js
 node /root/JDScripts/jd_shop.js
 node /root/JDScripts/jd_shop_sign.js
 node /root/JDScripts/jd_sign_graphics.js
+node /root/JDScripts/jd_sjjc.js
 node /root/JDScripts/jd_small_home.js
 node /root/JDScripts/jd_speed.js
 node /root/JDScripts/jd_speed_redpocke.js
@@ -135,6 +136,7 @@ node /root/JDScripts/jd_track.js
 node /root/JDScripts/jd_try.js
 node /root/JDScripts/jd_ttpt.js
 node /root/JDScripts/jd_unsubscribe.js
+node /root/JDScripts/jd_updatePackage.js
 node /root/JDScripts/jd_validate_Worker.js
 node /root/JDScripts/jd_wish.js
 node /root/JDScripts/jd_xsqjd.js
