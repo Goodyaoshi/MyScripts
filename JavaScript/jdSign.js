@@ -138,11 +138,8 @@ function serverNotify(text, desp, timeout = 2100) {
 function BarkNotify(text, desp) {
   return  new Promise(resolve => {
     if (BARK_PUSH) {
-	  if(BARK_PUSH && BARK_PUSH.indexOf('https') === -1 && BARK_PUSH.indexOf('http') === -1) {
-		  BARK_PUSH = `https://api.day.app/${BARK_PUSH}`
-	  }
       const options = {
-        url: `${BARK_PUSH}/${encodeURIComponent(text)}/${encodeURIComponent(desp)}?sound=silence&group=` + encodeURIComponent('京东签到'),
+        url: `https://api.day.app/${BARK_PUSH}/${encodeURIComponent(text)}/${encodeURIComponent(desp)}?sound=silence&group=` + encodeURIComponent('京东签到'),
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
         }
