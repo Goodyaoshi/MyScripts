@@ -44,14 +44,18 @@ function getcid(id){
             }
         }
     }
+	return 0;
 }
 
 // 设置章节id
-function setcid(cid,id){
+function setcid(cid,id,bookName,author,chapterName){
 	for (var p in BookList) {
         for (let i = 0; i < BookList[p].length; i++) {
             if(BookList[p][i].id == id){
                 BookList[p][i].cid = cid;
+                BookList[p][i].bookName = bookName;
+                BookList[p][i].author = author;
+                BookList[p][i].chapterName = chapterName;
 				return;
             }
         }
@@ -70,7 +74,7 @@ function updateChapter(id, BookName, Author, new_cid, UpdateChapterName) {
 	if(getcid(id) < new_cid){
 		Bark(BookName, Author, UpdateChapterName);
 	}
-    setcid(new_cid,id);
+    setcid(new_cid,id,BookName,Author,UpdateChapterName);
 }
 
 // 得到最新章节
