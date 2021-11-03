@@ -41,6 +41,14 @@ setJDScripts()
 	rm -rf /root/JDScripts/QuantumultX
 	rm -rf /root/JDScripts/*.py
 	rm -rf /root/JDScripts/*.md
+	cp -rf /root/JDShell/.git /root/JDScripts/
+	cd /root/JDScripts/
+	git add .
+	git commit -m "$(date +"%Y-%m-%d %H:%M:%S")"
+	git push -u origin master
+	cd /root/
+	rm -rf /root/JDShell/.git
+	cp -rf /root/JDScripts/.git /root/JDShell/
 	rm -rf /root/JDScripts/jdCookie.js
 	rm -rf /root/JDScripts/sendNotify.js
 	rm -rf /root/JDScripts/jd_get_share_code.js
