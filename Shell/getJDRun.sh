@@ -115,4 +115,3 @@ setCron()
 
 setJDScripts
 setShell
-setCron
