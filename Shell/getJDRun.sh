@@ -113,5 +113,23 @@ setCron()
 	service cron restart
 }
 
-setJDScripts
-setShell
+git pull -f
+rm -rf /root/JDScripts/jdCookie.js
+rm -rf /root/JDScripts/sendNotify.js
+rm -rf /root/JDScripts/jd_get_share_code.js
+rm -rf /root/JDScripts/jd_env_copy.js
+yes | cp /root/MyConfig/JDScripts/Cookie.json /root/JDScripts/Cookie.json
+yes | cp /root/MyScripts/JavaScript/jdCookie.js /root/JDScripts/jdCookie.js
+yes | cp /root/MyScripts/JavaScript/sendNotify.js /root/JDScripts/sendNotify.js
+sed -i 's#./Cookie.json#/root/JDScripts/Cookie.json#g' /root/JDScripts/jdCookie.js
+sed -i 's#./#/root/JDScripts/#g' /root/JDScripts/jdScripts.sh
+sed -i 's#/root/JDScripts/bi/root/JDScripts/bash#!/bin/bash#g' /root/JDScripts/jdScripts.sh
+cd /root/JDScripts/
+npm install
+cd /
+yes | cp /root/JDScripts/jdScripts.sh /root/JDShell/jdScripts.sh
+yes | cp /root/JDShell/jdScripts.sh /root/MyScripts/Shell/jdScripts.sh
+cd /root/MyScripts/
+git add Shell/
+git commit -m "$(date +"%Y-%m-%d %H:%M:%S")"
+git push -u origin master
