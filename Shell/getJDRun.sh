@@ -113,6 +113,7 @@ setCron()
 	service cron restart
 }
 
+cd /root/JDScripts/
 git pull -f
 rm -rf /root/JDScripts/jdCookie.js
 rm -rf /root/JDScripts/sendNotify.js
