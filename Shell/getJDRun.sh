@@ -35,6 +35,7 @@ setJDScripts()
 	cd /root/
 	cp -rf /root/jd_scripts/ /root/JDScripts/
 	rm -rf /root/JDScripts/.git
+	rm -rf /root/JDScripts/.github
 	rm -rf /root/JDScripts/docker
 	rm -rf /root/JDScripts/icon
 	rm -rf /root/JDScripts/Loon
@@ -43,6 +44,7 @@ setJDScripts()
 	rm -rf /root/JDScripts/*.md
 	cp -rf /root/JDShell/.git /root/JDScripts/
 	cd /root/JDScripts/
+	git pull
 	git add .
 	git commit -m "$(date +"%Y-%m-%d %H:%M:%S")"
 	git push -u origin master
