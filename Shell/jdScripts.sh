@@ -1,5 +1,4 @@
 #!/bin/bash
-yes | cp /root/MyConfig/JDScripts/Cookie.json /root/JDScripts/Cookie.json
 cd /root/JDScripts/
 node /root/JDScripts/cleancart_activity.js
 node /root/JDScripts/jd_88hb.js
@@ -95,6 +94,7 @@ node /root/JDScripts/jd_jxmc_getCoin.js
 node /root/JDScripts/jd_jxmc_stock.js
 node /root/JDScripts/jd_jxnc.js
 node /root/JDScripts/jd_jxnnfls.js
+node /root/JDScripts/jd_jxred.js
 node /root/JDScripts/jd_jxsign.js
 node /root/JDScripts/jd_kd.js
 node /root/JDScripts/jd_live.js
@@ -114,7 +114,6 @@ node /root/JDScripts/jd_plantBean.js
 node /root/JDScripts/jd_price.js
 node /root/JDScripts/jd_productZ4Brand.js
 node /root/JDScripts/jd_qjd.js
-node /root/JDScripts/jd_red.js
 node /root/JDScripts/jd_redEnvelope.js
 node /root/JDScripts/jd_redPacket.js
 node /root/JDScripts/jd_reward.js
