@@ -57,7 +57,7 @@ function getCookie(filepath){
 }
 
 // 测试cookie是否有效
-function checkCookie(cookie){
+async function checkCookie(cookie){
 	let result = false;
 	const USER_AGENTS = [
 		"jdapp;android;10.0.2;10;network/wifi;Mozilla/5.0 (Linux; Android 10; ONEPLUS A5010 Build/QKQ1.191014.012; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045230 Mobile Safari/537.36",
@@ -109,7 +109,7 @@ function checkCookie(cookie){
 			"Accept-Encoding": "gzip, deflate, br"
         }
 	}
-	rp.get(options, (err, resp, data) => {
+	await rp.get(options, (err, resp, data) => {
         try {
           if (err) {
             console.log(err);
