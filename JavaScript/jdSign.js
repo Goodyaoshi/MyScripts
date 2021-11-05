@@ -43,71 +43,64 @@ function loadjson(filepath){
 	return data;
 }
 
+// 保存配置文件
+function savejson(filepath, data){
+	let datastr = JSON.stringify(data, null, 4);
+	if (datastr){
+		try{
+			fs.writeFileSync(filepath, datastr);
+		}catch(err){}
+	}
+}
+
 //拼接京东Cookie
-function getCookie(filepath){
+async function getCookie(filepath){
 	let data = loadjson(filepath);
 	let jdCookie = [];
+	let newData = [];
 	for (let i = 0; i < data.length; i++) {
 		if(data[i].pt_key && data[i].pt_pin){
 			let str = "pt_key=" + data[i].pt_key + ";pt_pin=" + data[i].pt_pin + ";";
-			jdCookie.push(str);
+			let result = await checkCookie(str);
+			if(result.userLevel < 56 && result.levelName == '注册用户'){
+				console.log('【黑号账号】：' + result.nickname + '\n【用户分组】：' + result.levelName + '\n【用户等级】：' + result.userLevel);
+				BarkNotify('京东黑号', '【黑号账号】：' + result.nickname + '\n【用户分组】：' + result.levelName + '\n【用户等级】：' + result.userLevel);
+			}else if(!result.check){
+				console.log('【Cookie失效账号】：' + result.nickname?result.nickname:data[i].pt_pin);
+				BarkNotify('京东Cookie失效', '【Cookie失效账号】：' + result.nickname?result.nickname:data[i].pt_pin);
+			}else{
+				jdCookie.push(str);
+				newData.push(data[i]);
+			}
 		}
 	}
+	savejson(filepath, newData);
 	return jdCookie;
 }
 
 // 测试cookie是否有效
 async function checkCookie(cookie){
-	let result = false;
-	const USER_AGENTS = [
-		"jdapp;android;10.0.2;10;network/wifi;Mozilla/5.0 (Linux; Android 10; ONEPLUS A5010 Build/QKQ1.191014.012; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045230 Mobile Safari/537.36",
-		"jdapp;iPhone;10.0.2;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-		"jdapp;android;10.0.2;9;network/4g;Mozilla/5.0 (Linux; Android 9; Mi Note 3 Build/PKQ1.181007.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2 TBS/045131 Mobile Safari/537.36",
-		"jdapp;android;10.0.2;10;network/wifi;Mozilla/5.0 (Linux; Android 10; GM1910 Build/QKQ1.190716.003; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045230 Mobile Safari/537.36",
-		"jdapp;android;10.0.2;9;network/wifi;Mozilla/5.0 (Linux; Android 9; 16T Build/PKQ1.190616.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2 TBS/044942 Mobile Safari/537.36",
-		"jdapp;iPhone;10.0.2;13.6;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 13_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-		"jdapp;iPhone;10.0.2;13.6;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 13_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-		"jdapp;iPhone;10.0.2;13.5;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-		"jdapp;iPhone;10.0.2;14.1;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-		"jdapp;iPhone;10.0.2;13.3;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-		"jdapp;iPhone;10.0.2;13.7;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 13_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-		"jdapp;iPhone;10.0.2;14.1;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-		"jdapp;iPhone;10.0.2;13.3;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-		"jdapp;iPhone;10.0.2;13.4;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 13_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-		"jdapp;iPhone;10.0.2;14.3;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-		"jdapp;android;10.0.2;9;network/wifi;Mozilla/5.0 (Linux; Android 9; MI 6 Build/PKQ1.190118.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2 TBS/044942 Mobile Safari/537.36",
-		"jdapp;android;10.0.2;11;network/wifi;Mozilla/5.0 (Linux; Android 11; Redmi K30 5G Build/RKQ1.200826.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045511 Mobile Safari/537.36",
-		"jdapp;iPhone;10.0.2;11.4;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 11_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15F79",
-		"jdapp;android;10.0.2;10;;network/wifi;Mozilla/5.0 (Linux; Android 10; M2006J10C Build/QP1A.190711.020; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045230 Mobile Safari/537.36",
-		"jdapp;android;10.0.2;10;network/wifi;Mozilla/5.0 (Linux; Android 10; M2006J10C Build/QP1A.190711.020; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045230 Mobile Safari/537.36",
-		"jdapp;android;10.0.2;10;network/wifi;Mozilla/5.0 (Linux; Android 10; ONEPLUS A6000 Build/QKQ1.190716.003; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045224 Mobile Safari/537.36",
-		"jdapp;android;10.0.2;9;network/wifi;Mozilla/5.0 (Linux; Android 9; MHA-AL00 Build/HUAWEIMHA-AL00; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2 TBS/044942 Mobile Safari/537.36",
-		"jdapp;android;10.0.2;8.1.0;network/wifi;Mozilla/5.0 (Linux; Android 8.1.0; 16 X Build/OPM1.171019.026; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2 TBS/044942 Mobile Safari/537.36",
-		"jdapp;android;10.0.2;8.0.0;network/wifi;Mozilla/5.0 (Linux; Android 8.0.0; HTC U-3w Build/OPR6.170623.013; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2 TBS/044942 Mobile Safari/537.36",
-		"jdapp;iPhone;10.0.2;14.0.1;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_0_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-		"jdapp;android;10.0.2;10;network/wifi;Mozilla/5.0 (Linux; Android 10; LYA-AL00 Build/HUAWEILYA-AL00L; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045230 Mobile Safari/537.36",
-		"jdapp;iPhone;10.0.2;14.2;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-		"jdapp;iPhone;10.0.2;14.3;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-		"jdapp;iPhone;10.0.2;14.2;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-		"jdapp;android;10.0.2;8.1.0;network/wifi;Mozilla/5.0 (Linux; Android 8.1.0; MI 8 Build/OPM1.171019.026; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2 TBS/045131 Mobile Safari/537.36",
-		"jdapp;android;10.0.2;10;network/wifi;Mozilla/5.0 (Linux; Android 10; Redmi K20 Pro Premium Edition Build/QKQ1.190825.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045227 Mobile Safari/537.36",
-		"jdapp;iPhone;10.0.2;14.3;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-		"jdapp;iPhone;10.0.2;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-		"jdapp;android;10.0.2;11;network/wifi;Mozilla/5.0 (Linux; Android 11; Redmi K20 Pro Premium Edition Build/RKQ1.200826.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045513 Mobile Safari/537.36",
-		"jdapp;android;10.0.2;10;network/wifi;Mozilla/5.0 (Linux; Android 10; MI 8 Build/QKQ1.190828.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045227 Mobile Safari/537.36",
-		"jdapp;iPhone;10.0.2;14.1;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-	];
+	let result = {"check":false,"levelName": '注册用户',"nickname":'',"userLevel": '50'};
 	const options = {
         url: 'https://me-api.jd.com/user_new/info/GetJDUserInfoUnion',
         headers: {
-			"Host": "me-api.jd.com",
-			"Connection": "keep-alive",
-			"Cookie": cookie,
-			"User-Agent": USER_AGENTS[Math.floor(Math.random() * (USER_AGENTS.length))],
-			"Accept-Language": "zh-cn",
-			"Referer": "https://home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&",
-			"Accept-Encoding": "gzip, deflate, br"
-        }
+			'authority': 'me-api.jd.com',
+			'cache-control': 'max-age=0',
+			'sec-ch-ua': '"Microsoft Edge";v="95", "Chromium";v="95", ";Not A Brand";v="99"',
+			'sec-ch-ua-mobile': '?0',
+			'sec-ch-ua-platform': '"Windows"',
+			'upgrade-insecure-requests': '1',
+			'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36 Edg/95.0.1020.40',
+			'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+			'sec-fetch-site': 'none',
+			'sec-fetch-mode': 'navigate',
+			'sec-fetch-user': '?1',
+			'sec-fetch-dest': 'document',
+			'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
+			'cookie': cookie,
+			'dnt': '1',
+			'sec-gpc': '1'
+		}
 	}
 	await rp.get(options, (err, resp, data) => {
         try {
@@ -116,7 +109,10 @@ async function checkCookie(cookie){
           } else {
             data = JSON.parse(data);
             if (data.retcode === '0') {
-				result = true;
+				result.check = true;
+				result.nickname = data.data.userInfo.baseInfo.nickname;
+				result.levelName = data.data.userInfo.baseInfo.levelName;
+				result.userLevel = data.data.userInfo.baseInfo.userLevel;
             } else {
               console.log(`${data.message}\n`);
             }
@@ -341,29 +337,11 @@ async function deleteFile(path) {
 
 //每个账号执行京东签到
 async function jdSign(cookie) {
-	// 1、检查cookie
-	if(!checkCookie(cookie)){
-		let pin = cookie.match(pinReg);
-		let desp = '【签到账号】：' + pin + '\n【账号所有者】：';
-		if(pin == 'jd_4c10eb2c6c32c' || pin == 'jd_cmbklrvzIKCA'){
-			desp += '李耀识';
-		}else if(pin == 'wdNnUcnwxEEZun'){
-			desp += '王浩东';
-		}else if(pin == 'jd_6169da060a2d1'){
-			desp += '任永羲';
-		}else if(pin == 'jd_4046a2250f4b3'){
-			desp += '李泽树';
-		}else{
-			desp += '未知';
-		}
-		BarkNotify('京东Cookie失效', desp);
-		return;
-	}
-	// 2、替换cookie
+	// 1、替换cookie
 	await setupCookie(cookie);
-	// 3、执行脚本
+	// 2、执行脚本
 	await exec(`node ${js_path} >> ${result_path}`);
-	// 4、拼接通知
+	// 3、拼接通知
 	if (fs.existsSync(result_path)) {
 		const notifyContent = await fs.readFileSync(result_path, "utf8");
 		const barkContentStart = notifyContent.indexOf('【签到概览】');
@@ -380,7 +358,7 @@ async function jdSign(cookie) {
 		}
 		console.log(BarkContent);
 	}
-	// 5、删除文件
+	// 4、删除文件
 	await deleteFile(result_path);
 }
 
@@ -391,12 +369,13 @@ async function jdAllSign(){
 		return
 	}
 	// 获得并且分割cookie数组
-	let CookieJDs = getCookie(cookie_path);
+	let CookieJDs = await getCookie(cookie_path);
 	CookieJDs = [...new Set(CookieJDs.filter(item => !!item))];
 	// 每一个cookie单独执行签到
 	for(let i = 0; i < CookieJDs.length; i++){
 		let cookie = CookieJDs[i].trim();
 		await jdSign(cookie);
+		//await checkCookie(cookie);
 	}
 	// 发送通知信息
 	await sendNotify('京东多合一签到',allMessage);
