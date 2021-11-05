@@ -114,6 +114,7 @@ setCron()
 }
 
 cd /root/JDScripts/
+git restore .
 git pull -f
 rm -rf /root/JDScripts/jdCookie.js
 rm -rf /root/JDScripts/sendNotify.js
@@ -125,6 +126,7 @@ yes | cp /root/MyScripts/JavaScript/sendNotify.js /root/JDScripts/sendNotify.js
 sed -i 's#./Cookie.json#/root/JDScripts/Cookie.json#g' /root/JDScripts/jdCookie.js
 sed -i 's#./#/root/JDScripts/#g' /root/JDScripts/jdScripts.sh
 sed -i 's#/root/JDScripts/bi/root/JDScripts/bash#!/bin/bash#g' /root/JDScripts/jdScripts.sh
+sed -i 's#/root/JDScripts/roo/root/JDScripts/JDScript/root/JDScripts/# /root/JDScripts/#g' /root/JDScripts/jdScripts.sh
 cd /root/JDScripts/
 npm install
 cd /
