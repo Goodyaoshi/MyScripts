@@ -131,8 +131,9 @@ cd /root/JDScripts/
 npm install
 cd /
 yes | cp /root/JDScripts/jdScripts.sh /root/JDShell/jdScripts.sh
+rm -rf /root/MyScripts/Shell/jdScripts.sh
 yes | cp /root/JDShell/jdScripts.sh /root/MyScripts/Shell/jdScripts.sh
 cd /root/MyScripts/
-git add Shell/
+git add .
 git commit -m "$(date +"%Y-%m-%d %H:%M:%S")"
 git push -u origin master
