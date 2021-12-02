@@ -62,12 +62,12 @@ async function getCookie(filepath){
 		if(data[i].pt_key && data[i].pt_pin){
 			let str = "pt_key=" + data[i].pt_key + ";pt_pin=" + data[i].pt_pin + ";";
 			let result = await checkCookie(str);
-			if(result.userLevel < 56 && result.levelName == '注册用户'){
-				console.log('【黑号账号】：' + result.nickname + '\n【用户分组】：' + result.levelName + '\n【用户等级】：' + result.userLevel);
-				BarkNotify('京东黑号', '【黑号账号】：' + result.nickname + '\n【用户分组】：' + result.levelName + '\n【用户等级】：' + result.userLevel);
-			}else if(!result.check){
+			if(!result.check){
 				console.log('【Cookie失效账号】：' + result.nickname?result.nickname:data[i].pt_pin);
 				BarkNotify('京东Cookie失效', '【Cookie失效账号】：' + result.nickname?result.nickname:data[i].pt_pin);
+			}else if(result.userLevel < 56 && result.levelName == '注册用户'){
+				console.log('【黑号账号】：' + result.nickname + '\n【用户分组】：' + result.levelName + '\n【用户等级】：' + result.userLevel);
+				BarkNotify('京东黑号', '【黑号账号】：' + result.nickname + '\n【用户分组】：' + result.levelName + '\n【用户等级】：' + result.userLevel);
 			}else{
 				jdCookie.push(str);
 				newData.push(data[i]);
