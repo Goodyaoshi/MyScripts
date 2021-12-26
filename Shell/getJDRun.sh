@@ -59,13 +59,6 @@ setJDScripts()
 	yes | cp /root/MyScripts/JavaScript/jdCookie.js /root/JDScripts/jdCookie.js
 	yes | cp /root/MyScripts/JavaScript/sendNotify.js /root/JDScripts/sendNotify.js
 	sed -i 's#./Cookie.json#/root/JDScripts/Cookie.json#g' /root/JDScripts/jdCookie.js
-	cd /root/JDScripts/
-	npm install request-promise
-	npm install request
-	npm install crypto-js
-	npm install iconv-lite
-	npm install fs
-	npm install
 }
 
 setShell()
@@ -96,7 +89,7 @@ setShell()
 	sed -i '/^$/d' /root/JDShell/jdScripts.sh
 	yes | cp /root/JDShell/jdScripts.sh /root/MyScripts/Shell/jdScripts.sh
 	cd /root/MyScripts/
-	git add Shell/
+	git add .
 	git commit -m "$(date +"%Y-%m-%d %H:%M:%S")"
 	git push -u origin master
 }
